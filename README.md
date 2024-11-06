@@ -1,4 +1,4 @@
-## :rocket: Tecnologias utilizadas
+## :rocket: Tecnologias utilizadas
   
 * Java 21
 * Spring Boot
@@ -13,7 +13,7 @@
 [AWS_BADGE]:https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white
 
 
-<h1 align="left" style="font-weight: bold;">Crud DynamoDb with Spring 💻</h1>
+<h3 align="left" style="font-weight: bold;">💻 Crud DynamoDb with Spring </h3>
 <center>
 
 ![AWS][AWS_BADGE]
