@@ -27,8 +27,6 @@
 
 <h3>Cloning</h3>
 
-How to clone your project
-
 ```bash
 git clone https://github.com/luccassantos4/java-aws-crud-dynamodb.git
 ```
