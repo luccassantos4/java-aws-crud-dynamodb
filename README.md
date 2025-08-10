@@ -1,103 +1,128 @@
-## :rocket: Tecnologias utilizadas
-  
-* Java 21
-* Spring Boot
-* Spring Cloud AWS
-* AWS
-* DynamoDB (NoSQL Database)
-* Localstack
 
+# Java AWS CRUD DynamoDB
 
-[JAVA_BADGE]:https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white
-[SPRING_BADGE]: https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white
-[AWS_BADGE]:https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white
+![AWS][AWS_BADGE] ![spring][SPRING_BADGE] ![java][JAVA_BADGE]
 
+## Descrição
 
-<h3 align="left" style="font-weight: bold;">💻 Crud DynamoDb with Spring </h3>
-<center>
+Este projeto é uma API RESTful desenvolvida em Java 21 com Spring Boot, que permite gerenciar o histórico de pontuações de jogadores utilizando o banco de dados NoSQL DynamoDB da AWS. O objetivo é demonstrar como integrar aplicações Spring com serviços AWS de forma simples, utilizando o Spring Cloud AWS e LocalStack para testes locais.
 
-![AWS][AWS_BADGE]
-![spring][SPRING_BADGE]
-![java][JAVA_BADGE]
+## Tecnologias Utilizadas
 
-<h3>Prerequisites</h3>
+- Java 21
+- Spring Boot 3
+- Spring Cloud AWS
+- AWS DynamoDB (NoSQL)
+- LocalStack (emulação local da AWS)
+- Maven
 
-- [Spring](https://spring.io)
-- [LocalStack](https://www.localstack.cloud)
+## Arquitetura
 
-<h3>Cloning</h3>
+- **Controller:** expõe endpoints REST para operações CRUD.
+- **Entity:** mapeia o modelo `PlayerHistory` para a tabela DynamoDB.
+- **DTO:** define o contrato de dados para requisições.
+- **Config:** configura o cliente DynamoDB para uso local (LocalStack).
+- **Integração AWS:** utiliza Spring Cloud AWS para abstrair operações no DynamoDB.
 
-```bash
-git clone https://github.com/luccassantos4/java-aws-crud-dynamodb.git
-```
+## Pré-requisitos
 
-<h3>Starting</h3>
+- Java 21+
+- Maven 3.8+
+- Docker (para rodar o LocalStack)
+- LocalStack
 
-```bash
-cd /caminho/para/seu/projeto
-mvn spring-boot:run
-``````
+## Como executar localmente
 
+1. **Clone o repositório:**
+     ```bash
+     git clone https://github.com/luccassantos4/java-aws-crud-dynamodb.git
+     cd java-aws-crud-dynamodb
+     ```
 
-<h2 id="routes">📍 API Endpoints</h2>
+2. **Suba o LocalStack (DynamoDB):**
+     ```bash
+     docker run --rm -it -p 4566:4566 -e SERVICES=dynamodb localstack/localstack
+     ```
 
-Routes API and request body.
-​
-| route               | description                                          
-|----------------------|-----------------------------------------------------
-| <kbd>GET /v1/players/{playerId}/games</kbd>     | Retorna o histórico de pontuação [response details](#get-auth-detail)
-| <kbd>POST /v1/players/{playerId}/games</kbd>     |  Grava uma nova pontuação [request details](#post-auth-detail)
-| <kbd>PUT /v1/players/{playerId}/games/{gameId}</kbd>     | Atualiza uma nova pontuação [request details](#put-auth-detail)
-| <kbd>DELETE /v1/players/{playerId}/games/{gameId}</kbd>     | Exclui uma pontuação [request details](#delete-auth-detail)
+3. **Execute a aplicação:**
+     ```bash
+     mvn spring-boot:run
+     ```
 
-<h3 id="get-auth-detail">GET /v1/players/{playerId}/games</h3>
+4. **Acesse a API:**  
+     A aplicação estará disponível em `http://localhost:8080`.
 
-**RESPONSE**
-```json
-{
-    "playerId": "50",
-    "gameId": "09b0cc01-a846-472b-bf3a-611f05968463",
-    "score": 10.0,
-    "createdAt": "2024-11-06T03:18:53.709839Z"
-}
-```
+## Configuração
 
-<h3 id="post-auth-detail">POST /v1/players/{playerId}/games</h3>
+O acesso ao DynamoDB é feito via LocalStack, configurado em `DynamoDbConfig.java`:
+- Endpoint: `http://localhost:4566`
+- Região: `us-east-1`
+- Credenciais fictícias para uso local.
 
-**REQUEST**
+## Endpoints da API
+
+| Método | Rota                                         | Descrição                        |
+|--------|----------------------------------------------|----------------------------------|
+| GET    | `/v1/players/{playerId}/games`               | Lista histórico de pontuações    |
+| GET    | `/v1/players/{playerId}/games/{gameId}`      | Busca pontuação específica       |
+| POST   | `/v1/players/{playerId}/games`               | Cria nova pontuação              |
+| PUT    | `/v1/players/{playerId}/games/{gameId}`      | Atualiza pontuação               |
+| DELETE | `/v1/players/{playerId}/games/{gameId}`      | Remove pontuação                 |
+
+### Exemplos de Requisição e Resposta
+
+#### Criar pontuação
+
+**POST** `/v1/players/{playerId}/games`
 ```json
 {
     "score": 10
 }
 ```
+**Resposta:** `200 OK`
 
-**RESPONSE**
-```text
-200 OK
+#### Listar histórico
+
+**GET** `/v1/players/{playerId}/games`
+```json
+[
+    {
+        "playerId": "50",
+        "gameId": "09b0cc01-a846-472b-bf3a-611f05968463",
+        "score": 10.0,
+        "createdAt": "2024-11-06T03:18:53.709839Z"
+    }
+]
 ```
 
-<h3 id="put-auth-detail">PUT /v1/players/{playerId}/games/{gameId}</h3>
+#### Atualizar pontuação
 
-**REQUEST**
+**PUT** `/v1/players/{playerId}/games/{gameId}`
 ```json
 {
     "score": 50
 }
 ```
+**Resposta:** `204 NO_CONTENT`
 
-**RESPONSE**
-```text
-204 NO_CONTENT
+#### Excluir pontuação
+
+**DELETE** `/v1/players/{playerId}/games/{gameId}`  
+**Resposta:** `204 NO_CONTENT`
+
+## Testes
+
+Para rodar os testes:
+```bash
+mvn test
 ```
 
-<h3 id="delete-auth-detail">DELETE /v1/players/{playerId}/games/{gameId}</h3>
+## Observações
 
-**REQUEST**
-```json
+- O projeto utiliza LocalStack para simular o ambiente AWS localmente, facilitando o desenvolvimento e testes sem custos.
+- As credenciais e endpoint do DynamoDB são fictícios e não devem ser usados em produção.
+- Para produção, ajuste as configurações em `DynamoDbConfig.java` e `application.properties`.
 
-```
-
-**RESPONSE**
-```text
-204 NO_CONTENT
-```
+[JAVA_BADGE]:https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white
+[SPRING_BADGE]: https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white
+[AWS_BADGE]:https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white
